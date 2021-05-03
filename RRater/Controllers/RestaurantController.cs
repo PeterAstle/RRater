@@ -1,6 +1,7 @@
 ﻿using RRater.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -70,6 +71,47 @@ namespace RRater.Controllers
             _context.Restaurants.Remove(restaurant);
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        // GET: Restaurant/Edit/{id}
+        // Get and id fromt he user
+        // Handle if the id is null
+        // Find a Restaurant by that id
+        // If it does not exist return the restaurant and the view
+
+
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Restaurant restaurant = _context.Restaurants.Find(id);
+            if (restaurant == null)
+            {
+                return HttpNotFound();
+            }
+            return View(restaurant);
+        }
+
+
+
+        // POST: Restaurant/Edit/{id}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Restaurant restaurant)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Entry(restaurant).State = EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(restaurant);
         }
 
     }
